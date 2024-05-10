@@ -11,26 +11,24 @@ use work.command_array.all; --the array of std_logic_vector is defined here
  
 entity top is
 port (
+      --Board integrated clock
       i_clk       : in  std_logic;
       
-      tx_rx_serial : inout std_logic;
-      
-      --configuration to use with external 74LS240N
---      tx_serial: out std_logic;
---      rx_serial: in std_logic;
---      enable_write: out std_logic;
-      
-      
+      --Board pins
+      tx_rx_serial : inout std_logic;      
       tx_serial_pc: out std_logic; --send data to pc
-           
+      
+      --Board buttons
+      reset : in std_logic;
+      start: in std_logic;
+          
+      --Board switches 
       select_com: in std_logic_vector(2 downto 0);
       on_off: in std_logic;
       angle: in std_logic_vector(5 downto 0); --angle divided by 16
       speed: in std_logic_vector(3 downto 0); --speed divided by 16
       
-      reset : in std_logic;
-      start: in std_logic;
-      
+      --Board led
       endless_enable: out std_logic
       );
 end top;
@@ -49,7 +47,6 @@ architecture behave of top is
                                     
     read_required: in std_logic;
     tx_serial_pc: out std_logic
-    --enable_write: out std_logic   
    );      
   end component;
   
@@ -139,7 +136,7 @@ port map(
     start => start,
     reset => reset,
 
-    read_required => '1',
+    read_required => '0',
     --enable_write => WRITE_ENABLE,
     
     tx_rx_serial => tx_rx_serial,
