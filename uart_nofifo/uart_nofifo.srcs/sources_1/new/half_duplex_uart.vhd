@@ -113,8 +113,8 @@ UART_TX_PC : uart_tx
       );
 
 --Half duplex communication
-serial_data <= r_TX_SERIAL when TX_RX_MODE = '1'; --write mode
-w_RX_SERIAL <= serial_data when TX_RX_MODE = '0'; --read mode
+serial_data <= r_TX_SERIAL when TX_RX_MODE = '1' else 'Z'; --write mode
+w_RX_SERIAL <= serial_data; --read mode
 
 
 end Behavioral;
