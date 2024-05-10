@@ -13,10 +13,12 @@ entity top is
 port (
       i_clk       : in  std_logic;
       
-      tx_rx_serial : inout std_logic;      
-      tx_serial_pc: out std_logic; --send data to pc
-           
-      select_com: in std_logic_vector(2 downto 0);
+      
+      tx_serial : out std_logic; --send command to servo
+      rx_serial: in std_logic; --read command sent by original controller
+          
+
+      --This will allow us to change some parameters of the received command
       on_off: in std_logic;
       angle: in std_logic_vector(4 downto 0); --angle divided by 16
       speed: in std_logic_vector(3 downto 0); --speed divided by 16
@@ -32,21 +34,17 @@ end top;
  
 architecture behave of top is 
 
-    component tx_send_command is
-    Port (                            
-        i_clk: in std_logic;            
-        command: in mem(0 to 10);       
-        lenght:in integer;              
-        start: in std_logic;            
-        reset: in std_logic;            
-                                 
-        tx_rx_serial: inout std_logic;
-                                        
-        read_required: in std_logic;
-        tx_serial_pc: out std_logic
-        --enable_write: out std_logic   
-    );      
-    end component;
+  component tx_send_command is
+  Port (
+    i_clk: in std_logic;
+    command: in mem(0 to 10);
+    lenght:in integer;
+    start: in std_logic;
+    reset: in std_logic;
+    
+    tx_serial : out std_logic
+   );
+   end component;
     
     --tx_send control signals
     signal command: mem(0 to 10);
@@ -113,20 +111,6 @@ AX_POSITION_WANTED_ALL <= std_logic_vector(to_unsigned(to_integer(unsigned(ANGLE
 --each speed unit is 0.111 rpm, so calculate the speed to set applying a calculus
 AX_SPEED_WANTED_ALL <= std_logic_vector(to_unsigned(to_integer(unsigned(SPEED_WANTED)*1000)/111, AX_SPEED_WANTED_ALL'length)); --speed/0,111
 
-com_generator: command_generator
-port map(
-    select_com => select_com,
-    on_off => on_off,
-    ax_position => AX_POSITION_WANTED_ALL,
-    ax_speed => AX_SPEED_WANTED_ALL,
-    start => start, 
-    o_command => command,
-    lenght => lenght,
-    reply_lenght => REPLY_LENGHT,
-    o_endless_status => ENDLESS_STATUS,
-    o_read_required => o_READ_REQUIRED
-);
-
 
 sniffer : sniffer_dynamixel
 generic map (
@@ -136,7 +120,7 @@ generic map (
 port map (
     i_clk       => i_clk,
     reset       => reset,
-    rx_serial => tx_rx_serial,
+    rx_serial => rx_serial,
     lectura_completa     => lectura_completa,
     data_out    => data_out,
     sacar   => sacar
@@ -152,11 +136,7 @@ port map(
     start => start,
     reset => reset,
 
-    read_required => '1',
-    --enable_write => WRITE_ENABLE,
-    
-    tx_rx_serial => tx_rx_serial,
-    tx_serial_pc => tx_serial_pc
+    tx_serial => tx_serial
 );
 
     
