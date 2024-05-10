@@ -53,22 +53,6 @@ architecture behave of top is
     signal lenght: integer;
     signal tx_rx_serial1    : std_logic;
   
-  
-    component command_generator is
-    Port (
-      select_com: in std_logic_vector(2 downto 0);
-      on_off: in std_logic;
-      ax_position: in STD_LOGIC_VECTOR(15 downto 0);
-      ax_speed: in STD_LOGIC_VECTOR(15 downto 0);
-      start: in std_logic;
-      o_command: out mem(0 to 10);
-      lenght:out integer;
-      reply_lenght: out integer;
-      o_read_required: out std_logic;
-      o_endless_status: out STD_LOGIC
-    );
-    end component;
-  
 --  component reply_rx_tx is
 --  port (
 --      i_clk       : in  std_logic;
@@ -143,6 +127,23 @@ port map(
     o_read_required => o_READ_REQUIRED
 );
 
+
+sniffer : sniffer_dynamixel
+generic map (
+    motor_atacado => X"01",
+    c_CLKS_PER_BIT => c_CLKS_PER_BIT
+)
+port map (
+    i_clk       => i_clk,
+    reset       => reset,
+    rx_serial => tx_rx_serial,
+    lectura_completa     => lectura_completa,
+    data_out    => data_out,
+    sacar   => sacar
+);
+
+--TODO: Create a new module to modify the received command before sending
+
 tx_sending: tx_send_command
 port map(
     i_clk => i_clk,
@@ -159,29 +160,6 @@ port map(
 );
 
     
-sniffer : sniffer_dynamixel
-generic map (
-    motor_atacado => X"01",
-    c_CLKS_PER_BIT => c_CLKS_PER_BIT
-)
-port map (
-    i_clk       => i_clk,
-    reset       => reset,
-    rx_serial => tx_rx_serial,
-    lectura_completa     => lectura_completa,
-    data_out    => data_out,
-    sacar   => sacar
-);
-
---enable_read <= READ_ENABLE;
-
---UART_PC: reply_rx_tx
---port map(
---      i_clk => i_clk,
-      
---      tx_serial => tx_serial_pc,
---      rx_serial => tx_rx_serial
---);
 
 
 end behave;
