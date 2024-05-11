@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="44" Path="/home/almu/uart_nofifo/uart_nofifo.xpr">
+<Project Version="7" Minor="44" Path="/home/almu/DynamixelController/uart_nofifo/uart_nofifo.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="c79d9271b2dc48aaa3b1b7307e0320e0"/>
@@ -74,14 +74,14 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/top.vhd">
+      <File Path="$PPRDIR/../../uart_nofifo/uart_nofifo.srcs/sources_1/new/top.vhd">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/top_select.vhd">
+      <File Path="$PPRDIR/../../uart_nofifo/uart_nofifo.srcs/sources_1/new/top_select.vhd">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -146,7 +146,7 @@
     </FileSet>
     <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
       <Filter Type="Constrs"/>
-      <File Path="$PPRDIR/../uart-master/source/Basys3_Master.xdc">
+      <File Path="$PPRDIR/../../uart-master/source/Basys3_Master.xdc">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
