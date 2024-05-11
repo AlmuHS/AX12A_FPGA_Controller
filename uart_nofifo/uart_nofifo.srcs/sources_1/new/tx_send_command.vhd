@@ -33,10 +33,8 @@ entity tx_send_command is
     
     tx_rx_serial: inout std_logic;
     tx_serial_pc: out std_logic;
-    --rx_serial: in std_logic; 
    
     read_required: in std_logic
-    --enable_write: out std_logic
    );
 end tx_send_command;
 

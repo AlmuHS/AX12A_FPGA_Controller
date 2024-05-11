@@ -15,7 +15,9 @@ port (
       i_clk       : in  std_logic;
       
       --Board pins
-      tx_rx_serial : inout std_logic;      
+      tx_rx_serial : inout std_logic; --send and receive data to Dynamixel 
+      
+      --Board USB 
       tx_serial_pc: out std_logic; --send data to pc
       
       --Board buttons
@@ -69,19 +71,6 @@ architecture behave of top is
       o_endless_status: out STD_LOGIC
   );
   end component;
-  
---  component reply_rx_tx is
---  port (
---      i_clk       : in  std_logic;
-      
---      tx_serial : out std_logic;
---      rx_serial : in  std_logic
-
---      --enable: in std_logic
-      
---      --reset : in std_logic
---      );
---   end component;
       
   --Input values by user, to control engine action's parameters
   signal ANGLE_WANTED: STD_LOGIC_VECTOR(8 downto 0);  --Angle in degrees
@@ -136,22 +125,11 @@ port map(
     start => start,
     reset => reset,
 
-    read_required => '0',
-    --enable_write => WRITE_ENABLE,
+    read_required => o_READ_REQUIRED,
     
     tx_rx_serial => tx_rx_serial,
     tx_serial_pc => tx_serial_pc
 );
-
---enable_read <= READ_ENABLE;
-
---UART_PC: reply_rx_tx
---port map(
---      i_clk => i_clk,
-      
---      tx_serial => tx_serial_pc,
---      rx_serial => tx_rx_serial
---);
 
 
 end behave;
