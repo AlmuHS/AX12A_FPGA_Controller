@@ -96,6 +96,8 @@ begin
             lectura_completa <= '0';
         elsif (i_clk='1' and i_clk'event) then
             case estado is
+                when inicio =>
+                    estado <= cabecera1;
                 when cabecera1 =>
                     if (rx_done = '1') then
                         tam_trama <= (others => '0');
