@@ -73,7 +73,7 @@ architecture Behavioral of sniffer_dynamixel is
     signal data_tmp : mem(0 to 100);
     
 begin
-    comando <= data_tmp;
+    
 
     sniffer : uart_rx
     generic map (
@@ -143,6 +143,7 @@ begin
                     end if;
                 when chequeo =>
                     lectura_completa <= '1';
+                    comando <= data_tmp; --copy the command into the output signal
                     estado <= inicio;
                 when others =>
                     estado <= cabecera1; 
