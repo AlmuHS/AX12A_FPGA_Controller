@@ -152,7 +152,7 @@ begin
                     end if;
                 when chequeo =>
                     lectura_completa <= '1';
-                    long <= index + 1;
+                    long <= index-1;
                     comando <= data_tmp; --copy the command into the output signal
                     estado <= cabecera1;
                 when others =>
