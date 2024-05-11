@@ -39,7 +39,7 @@ architecture behave of top is
    end component;
     
     --tx_send control signals
-    signal command: mem(0 to 10);
+    signal command: mem(0 to 100);
     signal lenght: integer;
           
     signal ENDLESS_STATUS: STD_LOGIC := '0';    
