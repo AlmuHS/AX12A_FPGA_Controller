@@ -72,6 +72,8 @@ architecture Behavioral of sniffer_dynamixel is
     signal tam_trama : std_logic_vector(7 downto 0);
     signal data_tmp : mem(0 to 100);
     
+    signal index: integer;
+    
 begin
     
 
@@ -90,7 +92,7 @@ begin
     P1:process (i_clk, reset)
     begin
         if (reset = '1') then
-            estado <= inicio;
+            estado <= cabecera1;
             tam_trama <= (others => '0');
             data_tmp <= (others => (others => '0'));
             lectura_completa <= '0';
@@ -100,10 +102,12 @@ begin
                     estado <= cabecera1;
                 when cabecera1 =>
                     if (rx_done = '1') then
-                        tam_trama <= (others => '0');
-                        data_tmp <= (others => (others => '0'));
+                        --tam_trama <= (others => '0');
+                        --data_tmp <= (others => (others => '0'));
+                        index <= 0;
                         lectura_completa <= '0';
                         if (rx_byte = X"FF") then
+                            data_tmp(0) <= rx_byte;
                             estado <= cabecera2;
                         end if;
                     end if;
@@ -111,8 +115,9 @@ begin
                     if (rx_done = '1') then
                         if (rx_byte = X"FF") then
                             estado <= direccion;
+                            data_tmp(1) <= rx_byte;
                         else
-                            estado <= inicio;
+                            estado <= cabecera1;
                         end if;
                     end if;
                 when direccion =>
@@ -120,21 +125,25 @@ begin
                         if (rx_byte = X"FF") then
                             estado <= cabecera1;
                         else
-                            data_tmp <= rx_byte & data_tmp(0 to 99);
+                            --data_tmp <= rx_byte & data_tmp(0 to 99);
+                            data_tmp(2) <= rx_byte;
                             estado <= longitud;
                         end if;
                     end if;
                 when longitud =>
                     if (rx_done = '1') then
                         tam_trama <= rx_byte;
-                        long <= to_integer(unsigned(tam_trama)); --copy the command lenght to prepare the sending
-                        data_tmp <= rx_byte & data_tmp(0 to 99);
+                        --data_tmp <= rx_byte & data_tmp(0 to 99);
+                        data_tmp(3) <= rx_byte;
+                        index <= 4; 
                         estado <= parametros;
                     end if;
                 when parametros =>
                     if (rx_done = '1') then
                         tam_trama <= tam_trama-1;
-                        data_tmp <= rx_byte & data_tmp(0 to 99);
+                        --data_tmp <= rx_byte & data_tmp(0 to 99);
+                        data_tmp(index) <= rx_byte;
+                        index <= index + 1;
                         estado <= parametros;
                     else
                         if (tam_trama = 0) then
@@ -143,8 +152,9 @@ begin
                     end if;
                 when chequeo =>
                     lectura_completa <= '1';
+                    long <= index + 1;
                     comando <= data_tmp; --copy the command into the output signal
-                    estado <= inicio;
+                    estado <= cabecera1;
                 when others =>
                     estado <= cabecera1; 
             end case;
