@@ -44,8 +44,9 @@ entity sniffer_dynamixel is
            reset : in STD_LOGIC;
            rx_serial    : in STD_LOGIC;
            lectura_completa : out std_logic;
-           data_out     : out std_logic_vector(7 downto 0);
-           sacar        : in std_logic
+           comando: out mem(0 to 100);
+           long: out integer
+           --sacar        : in std_logic
     );
 end sniffer_dynamixel;
 
@@ -65,12 +66,15 @@ architecture Behavioral of sniffer_dynamixel is
     signal rx_done      : std_logic;
     signal rx_byte      : std_logic_vector(7 downto 0);
     
-    -- Captura de información
+    -- Captura de informaciï¿½n
     type estados_asm is (inicio, cabecera1, cabecera2, direccion, longitud, parametros, chequeo);
     signal estado   : estados_asm;
     signal tam_trama : std_logic_vector(7 downto 0);
     signal data_tmp : mem(0 to 100);
+    
 begin
+    comando <= data_tmp;
+
     sniffer : uart_rx
     generic map (
         g_CLKS_PER_BIT => c_CLKS_PER_BIT
@@ -82,7 +86,7 @@ begin
         o_rx_byte   => rx_byte
     );
 
-    -- Captura de información
+    -- Captura de informaciï¿½n
     P1:process (i_clk, reset)
     begin
         if (reset = '1') then
@@ -121,6 +125,7 @@ begin
                 when longitud =>
                     if (rx_done = '1') then
                         tam_trama <= rx_byte;
+                        long <= to_integer(unsigned(tam_trama)); --copy the command lenght to prepare the sending
                         data_tmp <= rx_byte & data_tmp(0 to 99);
                         estado <= parametros;
                     end if;

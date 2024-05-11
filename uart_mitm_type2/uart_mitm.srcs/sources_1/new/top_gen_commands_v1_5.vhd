@@ -1,6 +1,3 @@
-----------------------------------------------------------------------
--- File Downloaded from http://www.nandland.com
-----------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.ALL;
 use ieee.numeric_std.all;
@@ -13,21 +10,16 @@ entity top is
 port (
       i_clk       : in  std_logic;
       
-      
       tx_serial : out std_logic; --send command to servo
       rx_serial: in std_logic; --read command sent by original controller
           
 
-      --This will allow us to change some parameters of the received command
-      on_off: in std_logic;
-      angle: in std_logic_vector(4 downto 0); --angle divided by 16
-      speed: in std_logic_vector(3 downto 0); --speed divided by 16
+      --This will allow us to change some parameters of the received command before send it again
+      --on_off: in std_logic;
+      --angle: in std_logic_vector(4 downto 0); --angle divided by 16
+      --speed: in std_logic_vector(3 downto 0); --speed divided by 16
       
       reset : in std_logic;
-      start: in std_logic;
-      
-      endless_enable: out std_logic;
-      
       lectura_completa  : out std_logic
       );
 end top;
@@ -49,37 +41,8 @@ architecture behave of top is
     --tx_send control signals
     signal command: mem(0 to 10);
     signal lenght: integer;
-    signal tx_rx_serial1    : std_logic;
-  
---  component reply_rx_tx is
---  port (
---      i_clk       : in  std_logic;
-      
---      tx_serial : out std_logic;
---      rx_serial : in  std_logic
-
---      --enable: in std_logic
-      
---      --reset : in std_logic
---      );
---   end component;
-      
-    --Input values by user, to control engine action's parameters
-    signal ANGLE_WANTED: STD_LOGIC_VECTOR(8 downto 0);  --Angle in degrees
-    signal AX_POSITION_WANTED_ALL: STD_LOGIC_VECTOR(15 downto 0); --ANGLE_WANTED*0.29 degrees
-    
-    signal SPEED_WANTED: STD_LOGIC_VECTOR(7 downto 0);  --Speed in rpm
-    signal AX_SPEED_WANTED_ALL: STD_LOGIC_VECTOR(15 downto 0); --SPEED_WANTED*0.111 rpm
-    
-    signal ENDLESS_STATUS: STD_LOGIC := '0';
-    
-    --this signal indicates that the command return a data required to read
-    signal o_READ_REQUIRED: STD_LOGIC;
-    signal REPLY_LENGHT: integer;
-    signal WRITE_ENABLE: STD_LOGIC;
-    
-    signal w_TX_SERIAL_PC: std_logic;
-    
+          
+    signal ENDLESS_STATUS: STD_LOGIC := '0';    
     constant c_CLKS_PER_BIT : integer := 100;
   
     component sniffer_dynamixel is
@@ -91,26 +54,16 @@ architecture behave of top is
            reset : in STD_LOGIC;
            rx_serial    : in STD_LOGIC;
            lectura_completa : out std_logic;
-           data_out     : out std_logic_vector(7 downto 0);
-           sacar        : in std_logic
+           comando: out mem(0 to 100);
+           long: out integer
     );
     end component;
-    --signal lectura_completa      : std_logic;
-    signal data_out    : std_logic_vector(7 downto 0);
+
     signal sacar      : std_logic;
+    signal leido: std_logic;
 begin
 
-
---Because we have not enough switches to set the angle in range 0-300, and the speed in 0-111 we split in 16 slices
-ANGLE_WANTED <= angle&"0000"; --the real angle is the value multiplied by 16
-SPEED_WANTED <= speed&"0000"; --the real speed is the value multiplied by 16
-
-----each position step is 0.29 degrees, so calculate the position to move applying a calculus
-AX_POSITION_WANTED_ALL <= std_logic_vector(to_unsigned(to_integer(unsigned(ANGLE_WANTED)*100)/29, AX_POSITION_WANTED_ALL'length)); --angle/0.29
-
---each speed unit is 0.111 rpm, so calculate the speed to set applying a calculus
-AX_SPEED_WANTED_ALL <= std_logic_vector(to_unsigned(to_integer(unsigned(SPEED_WANTED)*1000)/111, AX_SPEED_WANTED_ALL'length)); --speed/0,111
-
+lectura_completa <= leido;
 
 sniffer : sniffer_dynamixel
 generic map (
@@ -121,9 +74,9 @@ port map (
     i_clk       => i_clk,
     reset       => reset,
     rx_serial => rx_serial,
-    lectura_completa     => lectura_completa,
-    data_out    => data_out,
-    sacar   => sacar
+    lectura_completa     => leido,
+    comando    => command,
+    long => lenght
 );
 
 --TODO: Create a new module to modify the received command before sending
@@ -133,13 +86,11 @@ port map(
     i_clk => i_clk,
     command => command,
     lenght => lenght,
-    start => start,
+    start => leido, --send the command just after receive it. Currently send the same command than received
     reset => reset,
 
     tx_serial => tx_serial
 );
-
-    
 
 
 end behave;
