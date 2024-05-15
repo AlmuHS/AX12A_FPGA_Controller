@@ -58,9 +58,21 @@ architecture behave of top is
            long: out integer
     );
     end component;
+    
+    component command_modifier is
+      Port (
+        command: in mem(0 to 100); --modified to fit with the sniffer
+        out_command: out mem(0 to 100);
+        lenght:in integer;
+        start: in std_logic
+       );
+    end component;
 
     signal sacar      : std_logic;
     signal leido: std_logic;
+    signal mod_command: mem(0 to 100);
+    
+    
 begin
 
 lectura_completa <= leido;
@@ -79,12 +91,19 @@ port map (
     long => lenght
 );
 
---TODO: Create a new module to modify the received command before sending
+--Modify command parameters before sending again
+modifier: command_modifier
+port map(
+    command => command,
+    lenght => lenght,
+    out_command => mod_command,
+    start => leido
+);
 
 tx_sending: tx_send_command
 port map(
     i_clk => i_clk,
-    command => command,
+    command => mod_command,
     lenght => lenght,
     start => leido, --send the command just after receive it. Currently send the same command than received
     reset => reset,
