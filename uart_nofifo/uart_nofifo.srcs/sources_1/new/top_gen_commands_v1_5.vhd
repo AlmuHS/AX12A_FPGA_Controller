@@ -125,7 +125,7 @@ port map(
     start => start,
     reset => reset,
 
-    read_required => o_READ_REQUIRED,
+    read_required => '0',
     
     tx_rx_serial => tx_rx_serial,
     tx_serial_pc => tx_serial_pc
