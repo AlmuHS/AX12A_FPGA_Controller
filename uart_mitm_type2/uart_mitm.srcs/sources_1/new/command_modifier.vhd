@@ -97,13 +97,13 @@ begin
             command_mod(7) <= AX_CHECKSUM; 
             
         elsif command(5) = AX_GOAL_SPEED_L then -- Turn command: divide speed / 2
-            command_mod(6) <= "00"&command(6)(AX_SPEED_WANTED_L'length-1 downto 1); --divide speed by two
+            command_mod(6) <= x"00"&command(6)(AX_SPEED_WANTED_L'length-1 downto 1); --divide speed by two
         
             AX_CHECKSUM <= not(ID + command_mod(3) + command_mod(4) + command_mod(5) + command_mod(6) + command_mod(7)) and x"FF";
             command_mod(8) <= AX_CHECKSUM; 
         
-        elsif command(5) = AX_GOAL_POSITION_L then --Move commands: divide position / 2
-            command_mod(6) <= "00"&command(6)(AX_POSITION_WANTED_L'length-1 downto 1);
+        elsif command(5) = AX_GOAL_POSITION_L then --Move commands: divide position / 4
+            command_mod(6) <= x"0000"&command(6)(AX_POSITION_WANTED_L'length-1 downto 2);
             
             if lenght = 10 then --Move speed
                 command_mod(6) <= "00"&command(6)(AX_SPEED_WANTED_L'length-1 downto 1); --divide speed by two
