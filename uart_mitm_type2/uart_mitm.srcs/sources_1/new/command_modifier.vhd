@@ -112,7 +112,7 @@ begin
                 command_mod(10) <= AX_CHECKSUM;
             
             else --Move
-                AX_CHECKSUM <= not(ID + command(3) + command(4) + command(5) + command(6) + command(7)) and x"FF";
+                AX_CHECKSUM <= not(ID + command_mod(3) + command_mod(4) + command_mod(5) + command_mod(6) + command_mod(7)) and x"FF";
                 command_mod(8) <= AX_CHECKSUM;
             end if;
         
