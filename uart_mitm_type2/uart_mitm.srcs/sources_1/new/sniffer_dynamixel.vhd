@@ -101,11 +101,11 @@ begin
                 when inicio =>
                     estado <= cabecera1;
                 when cabecera1 =>
+                    lectura_completa <= '0';
                     if (rx_done = '1') then
                         --tam_trama <= (others => '0');
                         --data_tmp <= (others => (others => '0'));
                         index <= 0;
-                        lectura_completa <= '0';
                         if (rx_byte = X"FF") then
                             data_tmp(0) <= rx_byte;
                             estado <= cabecera2;
