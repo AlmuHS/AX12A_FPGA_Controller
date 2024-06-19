@@ -13,12 +13,6 @@ port (
       tx_serial : out std_logic; --send command to servo
       rx_serial: in std_logic; --read command sent by original controller
           
-
-      --This will allow us to change some parameters of the received command before send it again
-      --on_off: in std_logic;
-      --angle: in std_logic_vector(4 downto 0); --angle divided by 16
-      --speed: in std_logic_vector(3 downto 0); --speed divided by 16
-      
       reset : in std_logic;
       lectura_completa  : out std_logic
       );
@@ -69,7 +63,7 @@ architecture behave of top is
     end component;
 
     signal sacar      : std_logic;
-    signal leido: std_logic;
+    signal leido: std_logic := '0';
     signal mod_command: mem(0 to 100);
     
     

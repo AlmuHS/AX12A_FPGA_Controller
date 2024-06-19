@@ -26,7 +26,7 @@ use work.command_array.all;
 entity tx_send_command is
   Port (
     i_clk: in std_logic;
-    command: in mem(0 to 10);
+    command: in mem(0 to 100);
     lenght:in integer;
     start: in std_logic;
     reset: in std_logic;
