@@ -31,7 +31,8 @@ port (
       speed: in std_logic_vector(3 downto 0); --speed divided by 16
       
       --Board led
-      endless_enable: out std_logic --endless on/off
+      endless_enable: out std_logic; --endless on/off
+      read_enable: in std_logic
       );
 end top;
  
@@ -126,7 +127,7 @@ port map(
     start => start,
     reset => reset,
 
-    read_required => '0',
+    read_required => read_enable,
     
     tx_rx_serial => tx_rx_serial,
     tx_serial_pc => tx_serial_pc

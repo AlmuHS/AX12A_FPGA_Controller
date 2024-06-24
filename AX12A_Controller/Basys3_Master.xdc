@@ -42,8 +42,8 @@ set_property PACKAGE_PIN T3 [get_ports {angle[5]}]
 #SW-10
 #set_property PACKAGE_PIN T2 [get_ports {angle[6]}]					
 #	set_property IOSTANDARD LVCMOS33 [get_ports {angle[6]}]
-#set_property PACKAGE_PIN R3 [get_ports {sw[11]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {sw[11]}]
+set_property PACKAGE_PIN R3 [get_ports {read_enable}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {read_enable}]
 set_property PACKAGE_PIN W2 [get_ports {select_com[0]}]					
 	set_property IOSTANDARD LVCMOS33 [get_ports {select_com[0]}]
 #SW-13
