@@ -34,8 +34,7 @@ entity command_generator is
       o_command: out mem(0 to 10);
       lenght: out integer;
       reply_lenght: out integer;
-      o_endless_status: out std_logic;
-      o_read_required: out std_logic
+      o_endless_status: out std_logic
   );
 end command_generator;
 
@@ -81,11 +80,7 @@ architecture Behavioral of command_generator is
   --this signal is enabled when ENDLESS mode is active
   signal ENDLESS_STATUS: STD_LOGIC := '0';
   
-  --this signal indicates that the command return a data required to read
-  signal READ_REQUIRED: STD_LOGIC := '0';
 begin
-
-READ_REQUIRED <= '1' when select_com = "101" else '0';
 
 o_command <= command;
 
@@ -95,7 +90,6 @@ AX_SPEED_WANTED_ALL <= ax_speed;
 set_com: process(start) is
 begin
     o_endless_status <= ENDLESS_STATUS;
-    o_read_required <= READ_REQUIRED;
 
     command(0) <= AX_START;
     command(1) <= AX_START;
@@ -120,7 +114,6 @@ begin
             command(7) <= AX_CHECKSUM; --xDD
             
             lenght <= 7;
-            READ_REQUIRED <= '0';
 
         when "001" => --Move to position indicates by angle wanted
             AX_POSITION_WANTED_L <= AX_POSITION_WANTED_ALL(7 downto 0);
@@ -136,7 +129,6 @@ begin
             command(8) <= AX_CHECKSUM; --xDD
             
             lenght <= 8;
-            READ_REQUIRED <= '1';
             
        when "010" => --turn at speed indicated by speed wanted
             AX_SPEED_WANTED_L <= AX_SPEED_WANTED_ALL(7 downto 0);
@@ -153,7 +145,6 @@ begin
             command(8) <= AX_CHECKSUM; --xEB
             
             lenght <= 8;
-            READ_REQUIRED <= '1';
     
         when "011" => --Endless ON/OFF -- FF FF 01 05 03 08 00 00 EE -- FF FF 01 05 03 08 FF 03 EC
             command(3) <= AX_GOAL_LENGHT; --x05
@@ -176,7 +167,6 @@ begin
             command(8) <= AX_CHECKSUM; --xEE
             
             lenght <= 8;
-            READ_REQUIRED <= '1';
             
         when "100" => --Move to the position indicated by position wanted, at the indicated speed      
             --The position is only used is Endless mode is disabled
@@ -203,7 +193,6 @@ begin
             command(10) <= AX_CHECKSUM; --x00
             
             lenght <= 10;  
-            READ_REQUIRED <= '1';
          
          when "101" => --Read speed
             command(3) <= AX_POS_LENGTH; --x04
@@ -216,8 +205,6 @@ begin
             
             lenght <= 7;
             reply_lenght <= 6;
-            
-            READ_REQUIRED <= '1';
                 
          when others => --turn LED ON
             AX_LENGHT <= x"04";
@@ -229,7 +216,6 @@ begin
             command(6) <= LED_ON;
             command(7) <= AX_CHECKSUM;
             
-            READ_REQUIRED <= '0';
             
             lenght <= 7;
     end case;

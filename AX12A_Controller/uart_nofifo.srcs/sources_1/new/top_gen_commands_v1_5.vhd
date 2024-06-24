@@ -31,7 +31,7 @@ port (
       speed: in std_logic_vector(3 downto 0); --speed divided by 16
       
       --Board led
-      endless_enable: out std_logic
+      endless_enable: out std_logic --endless on/off
       );
 end top;
  
@@ -67,7 +67,6 @@ architecture behave of top is
       o_command: out mem(0 to 10);
       lenght:out integer;
       reply_lenght: out integer;
-      o_read_required: out std_logic;
       o_endless_status: out STD_LOGIC
   );
   end component;
@@ -103,6 +102,9 @@ AX_POSITION_WANTED_ALL <= std_logic_vector(to_unsigned(to_integer(unsigned(ANGLE
 --each speed unit is 0.111 rpm, so calculate the speed to set applying a calculus
 AX_SPEED_WANTED_ALL <= std_logic_vector(to_unsigned(to_integer(unsigned(SPEED_WANTED)*1000)/111, AX_SPEED_WANTED_ALL'length)); --speed/0,111
 
+--Enable led in Endless is ON
+endless_enable <= ENDLESS_STATUS;
+
 com_generator: command_generator
 port map(
     select_com => select_com,
@@ -113,8 +115,7 @@ port map(
     o_command => command,
     lenght => lenght,
     reply_lenght => REPLY_LENGHT,
-    o_endless_status => ENDLESS_STATUS,
-    o_read_required => o_READ_REQUIRED
+    o_endless_status => ENDLESS_STATUS
 );
 
 tx_sending: tx_send_command
@@ -125,7 +126,7 @@ port map(
     start => start,
     reset => reset,
 
-    read_required => '1',
+    read_required => '0',
     
     tx_rx_serial => tx_rx_serial,
     tx_serial_pc => tx_serial_pc
