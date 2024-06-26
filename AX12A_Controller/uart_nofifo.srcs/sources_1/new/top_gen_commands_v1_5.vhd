@@ -93,14 +93,14 @@ architecture behave of top is
 begin
 
 
---Because we have not enough switches to set the angle in range 0-300, and the speed in 0-111 we split in 16 slices
-ANGLE_WANTED <= angle&"000"; --the real angle is the value multiplied by 16
+--Because we have not enough switches to set the angle in range 0-300, and the speed in 0-111 we split in 8 or 16 slices
+ANGLE_WANTED <= angle&"000"; --the real angle is the value multiplied by 8
 SPEED_WANTED <= speed&"0000"; --the real speed is the value multiplied by 16
 
-----each position step is 0.29 degrees, so calculate the position to move applying a calculus
+----each position step is 0.29 degrees, so calculate the position to move applying the formula position = angle / 0,29
 AX_POSITION_WANTED_ALL <= std_logic_vector(to_unsigned(to_integer(unsigned(ANGLE_WANTED)*100)/29, AX_POSITION_WANTED_ALL'length)); --angle/0.29
 
---each speed unit is 0.111 rpm, so calculate the speed to set applying a calculus
+--each speed unit is 0.111 rpm, so calculate the speed to set applying the formula speed = rpm / 0,111
 AX_SPEED_WANTED_ALL <= std_logic_vector(to_unsigned(to_integer(unsigned(SPEED_WANTED)*1000)/111, AX_SPEED_WANTED_ALL'length)); --speed/0,111
 
 --Enable led in Endless is ON
